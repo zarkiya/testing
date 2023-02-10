@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Real-time Chat (Group Chat)</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      #chat-window {
+        height: 500px;
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <br>
+      <h2 class="text-center">Real-time Chat (Group Chat)</h2>
+      <h6 class="text-center"><i>Closed Beta v1.0.0</i></h6>
+      <br>
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <div id="chat-window" class="card">
+            <div class="card-body">
+                
+<% chats.forEach(function (row) { %>
+    <li class="list-group-item">
+      <strong><%= row.username %>:</strong> <%= row.message %>
+    </li>
+  <% }); %>
+
+              <ul class="list-group" id="chat"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <form id="chat-form">
+            <div class="form-group">
+              <input type="text" id="username" class="form-control" placeholder="Username" value="<%= username %>">
+            </div>
+            <div class="form-group">
+              <textarea id="message" class="form-control" rows="3" placeholder="Mohon chat dengan sopan.."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Send</button>
+            </form>
+            </div>
+            </div>
+            </div>
+            <script>
+                var socket = io();
+                
+                $('#chat-form').submit(function(e){
+                  e.preventDefault();
+                  
+                  var username = $('#username').val();
+                  var message = $('#message').val();
+                  
+                  socket.emit('chat message', {
+                    username: username,
+                    message: message
+                  });
+                  
+                  $('#message').val('');
+                  return false;
+                });
+                
+                socket.on('chat message', function(msg){
+                  $('#chat').append($('<li class="list-group-item">').html('<strong>' + msg.username + ': </strong>' + msg.message));
+                  
+                  var chatWindow = $('#chat-window');
+                  chatWindow.scrollTop(chatWindow[0].scrollHeight);
+                });
+              </script>
+</body>
+</html>              
