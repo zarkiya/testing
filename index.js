@@ -21,7 +21,7 @@ app.set('view engine', 'ejs');
 //   });
 // });
 
-app.get('/chat-app', function(req, res){
+app.get('/', function(req, res){
     connection.query("SELECT * FROM messages", function (error, result, fields) {
       res.render('index', {username: '', chats: result });
     });
